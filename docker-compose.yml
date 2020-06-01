@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  elasticsearch:
+    container_name: myfinance3-elasticsearch
+    image: 'elasticsearch:6.4.2'
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - './var/elasticsearch:/usr/share/elasticsearch/data'
+
+  logstash:
+    image: 'logstash:6.4.2'
+    container_name: myfinance3-logstash
+    ports: ['9600:9600']
+    depends_on: ['elasticsearch']
+    volumes:
+      - './etc/logstash/pipeline:/usr/share/logstash/pipeline'
+      - '../myfinance3/apps/Portal/backend/var/log:/logs'
+
+  kibana:
+    image: 'kibana:6.4.2'
+    ports: ['5601:5601']
+    depends_on:
+      - 'elasticsearch'
